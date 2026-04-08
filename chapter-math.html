@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>St. Mary's Diocese — Math Study Helper</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --navy: #1a2744;
+    --gold: #c9a84c;
+    --gold-light: #f0d9a0;
+    --cream: #fdf8f0;
+    --warm-white: #fffdf9;
+    --text: #2c2c2c;
+    --muted: #7a7060;
+  }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--cream);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 24px 16px;
+    position: relative;
+    overflow-x: hidden;
+  }
+
+  /* Background cross watermark */
+  body::before {
+    content: '✝';
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 600px;
+    color: rgba(201, 168, 76, 0.04);
+    pointer-events: none;
+    z-index: 0;
+    line-height: 1;
+  }
+
+  .card {
+    background: var(--warm-white);
+    border-radius: 20px;
+    width: 100%;
+    max-width: 420px;
+    box-shadow: 0 8px 40px rgba(26,39,68,0.10), 0 1px 0 rgba(201,168,76,0.3);
+    overflow: hidden;
+    position: relative;
+    z-index: 1;
+    animation: rise 0.6s cubic-bezier(0.22,1,0.36,1) both;
+  }
+
+  @keyframes rise {
+    from { opacity: 0; transform: translateY(28px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Header */
+  .header {
+    background: var(--navy);
+    padding: 28px 24px 22px;
+    position: relative;
+    overflow: hidden;
+  }
+  .header::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  }
+
+  .diocese {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 8px;
+    opacity: 0.9;
+  }
+
+  .school-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    color: #fff;
+    line-height: 1.2;
+    margin-bottom: 4px;
+  }
+
+  .cross-divider {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 14px 0 0;
+  }
+  .cross-divider span {
+    color: var(--gold);
+    font-size: 12px;
+    opacity: 0.6;
+  }
+  .cross-divider .line {
+    flex: 1;
+    height: 1px;
+    background: rgba(201,168,76,0.25);
+  }
+
+  /* Chapter badge */
+  .chapter-badge {
+    margin: 22px 24px 0;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .chapter-icon {
+    width: 44px;
+    height: 44px;
+    background: var(--navy);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+  }
+  .chapter-info {}
+  .chapter-label {
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .chapter-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 17px;
+    color: var(--navy);
+    margin-top: 1px;
+  }
+
+  /* Verse */
+  .verse {
+    margin: 18px 24px;
+    padding: 14px 16px;
+    background: linear-gradient(135deg, rgba(201,168,76,0.08), rgba(201,168,76,0.04));
+    border-left: 3px solid var(--gold);
+    border-radius: 0 10px 10px 0;
+  }
+  .verse p {
+    font-size: 12px;
+    color: var(--muted);
+    font-style: italic;
+    line-height: 1.6;
+  }
+  .verse cite {
+    display: block;
+    font-size: 10px;
+    color: var(--gold);
+    font-style: normal;
+    font-weight: 500;
+    margin-top: 5px;
+    letter-spacing: 1px;
+  }
+
+  /* Input area */
+  .input-section {
+    padding: 0 24px 8px;
+  }
+
+  .input-label {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--navy);
+    letter-spacing: 0.5px;
+    margin-bottom: 8px;
+    display: block;
+  }
+
+  .doubt-input {
+    width: 100%;
+    min-height: 110px;
+    padding: 14px 16px;
+    border: 1.5px solid rgba(26,39,68,0.12);
+    border-radius: 12px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    color: var(--text);
+    background: var(--cream);
+    resize: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    line-height: 1.6;
+  }
+  .doubt-input:focus {
+    outline: none;
+    border-color: var(--gold);
+    box-shadow: 0 0 0 3px rgba(201,168,76,0.12);
+  }
+  .doubt-input::placeholder {
+    color: #bbb5a8;
+  }
+
+  /* Grade selector */
+  .grade-row {
+    display: flex;
+    gap: 8px;
+    margin: 12px 0;
+  }
+  .grade-label {
+    font-size: 11px;
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+    white-space: nowrap;
+  }
+  .grade-select {
+    flex: 1;
+    padding: 8px 12px;
+    border: 1.5px solid rgba(26,39,68,0.12);
+    border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    color: var(--navy);
+    background: var(--cream);
+    cursor: pointer;
+  }
+  .grade-select:focus { outline: none; border-color: var(--gold); }
+
+  /* Buttons */
+  .btn-row {
+    padding: 4px 24px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .btn-primary {
+    width: 100%;
+    padding: 15px;
+    background: var(--navy);
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: background 0.2s, transform 0.1s;
+    position: relative;
+    overflow: hidden;
+  }
+  .btn-primary::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 2px;
+    background: var(--gold);
+  }
+  .btn-primary:hover { background: #243460; }
+  .btn-primary:active { transform: scale(0.98); }
+
+  .btn-secondary {
+    width: 100%;
+    padding: 13px;
+    background: transparent;
+    color: var(--navy);
+    border: 1.5px solid rgba(26,39,68,0.15);
+    border-radius: 12px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 400;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: border-color 0.2s, background 0.2s;
+  }
+  .btn-secondary:hover { border-color: var(--gold); background: rgba(201,168,76,0.04); }
+
+  /* Preview box */
+  .preview {
+    margin: 0 24px 16px;
+    padding: 12px 14px;
+    background: rgba(26,39,68,0.03);
+    border-radius: 10px;
+    border: 1px dashed rgba(26,39,68,0.12);
+    display: none;
+  }
+  .preview.show { display: block; animation: fadein 0.3s ease; }
+  @keyframes fadein { from { opacity:0; } to { opacity:1; } }
+  .preview-label {
+    font-size: 9px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 6px;
+  }
+  .preview-text {
+    font-size: 11px;
+    color: var(--text);
+    line-height: 1.6;
+    max-height: 80px;
+    overflow: hidden;
+    position: relative;
+  }
+  .preview-text::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 24px;
+    background: linear-gradient(transparent, rgba(26,39,68,0.03));
+  }
+
+  /* Footer */
+  .footer {
+    padding: 0 24px 20px;
+    text-align: center;
+  }
+  .footer p {
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.5px;
+  }
+  .footer .cross { color: var(--gold); margin: 0 4px; }
+
+  /* Toast */
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(80px);
+    background: var(--navy);
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 100px;
+    font-size: 13px;
+    font-weight: 500;
+    transition: transform 0.3s cubic-bezier(0.22,1,0.36,1);
+    z-index: 100;
+    white-space: nowrap;
+    border-bottom: 2px solid var(--gold);
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+</style>
+</head>
+<body>
+
+<div class="card">
+
+  <!-- Header -->
+  <div class="header">
+    <div class="diocese">St. Mary's Diocese</div>
+    <div class="school-name">Study Helper</div>
+    <div class="cross-divider">
+      <div class="line"></div>
+      <span>✝</span>
+      <div class="line"></div>
+    </div>
+  </div>
+
+  <!-- Chapter Badge -->
+  <div class="chapter-badge">
+    <div class="chapter-icon">📐</div>
+    <div class="chapter-info">
+      <div class="chapter-label">Chapter 4 · Mathematics</div>
+      <div class="chapter-title">Fractions & Decimals</div>
+    </div>
+  </div>
+
+  <!-- Verse -->
+  <div class="verse">
+    <p>"For I know the plans I have for you... plans to give you hope and a future."</p>
+    <cite>— Jeremiah 29:11</cite>
+  </div>
+
+  <!-- Input -->
+  <div class="input-section">
+    <label class="input-label">What don't you understand? 🤔</label>
+    <textarea
+      class="doubt-input"
+      id="doubtInput"
+      placeholder="e.g. I don't understand how to convert fractions to decimals..."
+      oninput="updatePreview()"
+    ></textarea>
+
+    <div class="grade-row">
+      <span class="grade-label">My grade &nbsp;</span>
+      <select class="grade-select" id="gradeSelect" onchange="updatePreview()">
+        <option value="3">Grade 3</option>
+        <option value="4">Grade 4</option>
+        <option value="5" selected>Grade 5</option>
+        <option value="6">Grade 6</option>
+        <option value="7">Grade 7</option>
+        <option value="8">Grade 8</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Prompt Preview -->
+  <div class="preview" id="preview">
+    <div class="preview-label">Prompt that will be sent</div>
+    <div class="preview-text" id="previewText"></div>
+  </div>
+
+  <!-- Buttons -->
+  <div class="btn-row">
+    <button class="btn-primary" onclick="openChatGPT()">
+      ✝ &nbsp; Ask in ChatGPT
+    </button>
+    <button class="btn-secondary" onclick="openClaude()">
+      Ask in Claude
+    </button>
+    <button class="btn-secondary" onclick="copyPrompt()">
+      📋 &nbsp; Copy Prompt
+    </button>
+  </div>
+
+  <div class="footer">
+    <p>Faith-safe <span class="cross">✝</span> Ad-free <span class="cross">✝</span> Always here to help</p>
+  </div>
+
+</div>
+
+<div class="toast" id="toast">✅ Prompt copied!</div>
+
+<script>
+  const CHAPTER = "Chapter 4: Fractions & Decimals";
+  const SUBJECT = "Mathematics";
+
+  function buildPrompt() {
+    const doubt = document.getElementById('doubtInput').value.trim();
+    const grade = document.getElementById('gradeSelect').value;
+    return `You are a warm, encouraging Math tutor for a Grade ${grade} student at a Christian school. The student is studying ${SUBJECT} — specifically ${CHAPTER}. Use simple, clear language suitable for Grade ${grade}. Keep explanations faith-friendly and encouraging. Never use inappropriate content. Help the student truly understand, step by step.
+
+Student's question: ${doubt || "[student will type their question here]"}`;
+  }
+
+  function updatePreview() {
+    const doubt = document.getElementById('doubtInput').value.trim();
+    const preview = document.getElementById('preview');
+    const previewText = document.getElementById('previewText');
+    if (doubt.length > 2) {
+      preview.classList.add('show');
+      previewText.textContent = buildPrompt();
+    } else {
+      preview.classList.remove('show');
+    }
+  }
+
+  function openChatGPT() {
+    const prompt = buildPrompt();
+    const url = `https://chatgpt.com/?q=${encodeURIComponent(prompt)}`;
+    window.open(url, '_blank');
+  }
+
+  function openClaude() {
+    const prompt = buildPrompt();
+    const url = `https://claude.ai/new?q=${encodeURIComponent(prompt)}`;
+    window.open(url, '_blank');
+  }
+
+  function copyPrompt() {
+    const prompt = buildPrompt();
+    navigator.clipboard.writeText(prompt).then(() => {
+      const toast = document.getElementById('toast');
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 2500);
+    });
+  }
+</script>
+</body>
+</html>
